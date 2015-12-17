@@ -24,8 +24,11 @@ class GameWindow < Gosu::Window
 		
 
 		@player = Player.new
+		@player2 = Player.new
 		
-		@player.warp(width, height/2)
+		@player.warp(width/4, height/2)
+
+		@player2.warp(width-width/4, height/2)
 
 		@bullets = []
 
@@ -38,17 +41,33 @@ class GameWindow < Gosu::Window
 		@player.turn_right if Gosu::button_down? Gosu::KbD
 		@player.accelerate if Gosu::button_down? Gosu::KbW
 		@bullets << @player.shoot if Gosu::button_down? Gosu::KbSpace
-
 		@player.move
+		
+		
+
+		@player2.turn_left if Gosu::button_down? Gosu::KbLeft
+		@player2.turn_right if Gosu::button_down? Gosu::KbRight
+		@player2.accelerate if Gosu::button_down? Gosu::KbUp
+		@bullets << @player2.shoot if Gosu::button_down? Gosu::KbEnter
+		@player2.move
+		
+
 	end
 
 	def draw
 		@map.draw(0,0)
 		@player.draw
+		@player2.draw
 		@bullets.each {|bullet|
-			bullet.update
-			bullet.draw
+			if bullet != nil
+				bullet.update
+				bullet.draw
+			end
 		}
+		@font.draw("Player1: #{@player.health}♥", 10,30,3,1.0,1.0, 0xff_000099 )
+		@font.draw("Player2: #{@player2.health}♥", width-(width/7),30,3,1.0,1.0, 0xff_e60000 )
+		@font.draw("Bounty: $#{@player.bounty}", 10,10,3,1.0,1.0, 0xff_000099 )
+		@font.draw("Bounty: $#{@player2.bounty}", width-(width/7),10,3,1.0,1.0, 0xff_e60000)
 	end
 
 	def button_down(id)
